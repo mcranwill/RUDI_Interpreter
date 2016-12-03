@@ -3,7 +3,7 @@ import parserRudi
 def main():
     rudiProgramLines = openFileForLines()
 
-    executionList = parserRudi.parseToExecutionList(rudiProgramLines)
+    executionList = parserRudi.parseToLineList(rudiProgramLines)
 
     print("Length of rudiProgramLines is " + str(len(rudiProgramLines)))
     print("Length of executionList is " + str(len(executionList)))
@@ -13,7 +13,9 @@ def main():
         for l in executionList:
             print(l)
         exit()
-
+    else:
+        for l in executionList:
+            print(l)
     print("Everything parsed correctly.")
 
 def openFileForLines():
@@ -28,5 +30,4 @@ def openFileForLines():
 
 
 if __name__ == '__main__':
-    print("hello")
     main()

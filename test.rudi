@@ -1,4 +1,10 @@
-/* Factorial Calculator */
+/* Factorial Calculator
+
+program
+decs [
+integer fact
+words */
+
 program
 decs [
 integer fact /* factorial result */
@@ -6,7 +12,7 @@ integer x /* intermediate factorial value */
 integer n /* input factorial term */
 ]
 begin
-print "Enter the factorial term:"
+PRInt "Enter the factorial term:"
 input n
 if ( n :eq: 0 ) then
 [
