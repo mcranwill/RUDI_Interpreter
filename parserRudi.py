@@ -1,5 +1,4 @@
 import SyntaxRUDI
-import _collections
 import ResourceTypes
 
 def parserRudi():
@@ -74,6 +73,9 @@ def validateSyntax(executionList):
                 executableSections.append(tupleOfIf)
                 i = endIndexOfThisBracket -1
         elif temp_str_val.find('print') > -1:
+            subControlledTuple = (i , temp_str_val, ResourceTypes.SectionType.io_operation)
+            executableSections.append(subControlledTuple)
+        elif temp_str_val.find('input') > -1:
             subControlledTuple = (i , temp_str_val, ResourceTypes.SectionType.io_operation)
             executableSections.append(subControlledTuple)
         elif '+' in temp_str_val or '-' in temp_str_val or '*' in temp_str_val or \

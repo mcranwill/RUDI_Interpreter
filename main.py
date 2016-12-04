@@ -8,7 +8,7 @@ def main():
     executionList = parserRudi.parseToLineList(rudiProgramLines)
     executableSections = parserRudi.validateSyntax(executionList)
 
-    evaluatorRudi.evaluatorRudi()
+    evaluatorRudi.evaluatorRudi(executableSections)
 
     #   Do we have error messages to display?
     if type(executableSections[0]) != tuple:

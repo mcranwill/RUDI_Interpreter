@@ -12,7 +12,10 @@ def ERRORBeginStatementMissing(lineNum):
     return "Line " + str(lineNum) + ": Keyword 'begin' should appear before this line"
 def ERROROpenBracketMissing(lineNum):
     return "Line " + str(lineNum) + ": Open bracket should be on this line or the next"
-
+def InvalidType(lineNum, failedType):
+    return "Line " + str(lineNum) + ": Type presented " + failedType + " is not valid"
+def InvalidVariable(lineNum, failedVar):
+    return "Line " + str(lineNum) + ": Variable " + failedVar + " does not exist"
 # def validatedecsOpenBracket(line):
 #     if line.find('[') > -1:
 #         print("they are on the same line")

@@ -14,6 +14,7 @@ integer n /* input factorial term */
 begin
 PRInt "Enter the factorial term:"
 input n
+x = n
 if ( n :eq: 0 ) then
 [
 fact = 1
@@ -30,4 +31,8 @@ fact = fact * x
 print n
 print "!="
 print fact
+print ",but"
+print n
+print "!="
+print x
 end
