@@ -1,22 +1,23 @@
 import parserRudi
+import evaluatorRudi
 
 
 def main():
     rudiProgramLines = openFileForLines()
 
     executionList = parserRudi.parseToLineList(rudiProgramLines)
-    executionList = parserRudi.validateSyntax(executionList)
+    executableSections = parserRudi.validateSyntax(executionList)
 
-    print("Length of rudiProgramLines is " + str(len(rudiProgramLines)))
-    print("Length of executionList is " + str(len(executionList)))
+    evaluatorRudi.evaluatorRudi()
 
     #   Do we have error messages to display?
-    if executionList[0].find("Error Messages") > -1:
-        for l in executionList:
-            print(l)
-        exit()
+    if type(executableSections[0]) != tuple:
+        if str(executableSections[0]).find("Error Messages") > -1:
+            for l in executableSections:
+                print(l)
+            exit()
     else:
-        for l in executionList:
+        for l in executableSections:
             print(l)
     print("Everything parsed correctly.")
 
