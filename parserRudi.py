@@ -1,10 +1,80 @@
 import SyntaxRUDI
 import _collections
+import ResourceTypes
 
 def parserRudi():
     # Start Parsing
     print("Hello from parser!")
 
+def validateSyntax(executionList):
+    errorMessages = []
+    executableSections = []
+
+    #   Validate specific elements to ensure consistency with syntax
+    if str(executionList[0]).lower().find('program') == -1:
+        errorMessages.append(SyntaxRUDI.ERRORProgramMissing)
+
+    if str(executionList[-1]).lower().find('end') == -1:
+        errorMessages.append(SyntaxRUDI.ERROREndStatementMissing(len(executionList)))
+
+    finishedDecs = False
+    settingBegin = False
+    i = 0
+
+    while (i < len(executionList)-1):
+        temp_str_val = str(executionList[i])
+        if temp_str_val.find('decs') > -1:
+            #   Now we need to find where decs ends and process until we get there
+            #   First option is they are on the same line
+            if finishedDecs == True:
+                errorMessages.append(SyntaxRUDI.ERRORdecsDeclaredAlready(i))
+            else:
+                endIndexOfThisBracket = i
+                if temp_str_val.find('[') > -1:
+                    print("they are on the same line")
+                elif str(executionList[i+1]).find('[') > -1:
+                    print("it is one the next line")
+                else:
+                    errorMessages.append(SyntaxRUDI.ERRORdecsOpenBracketMissing(i))
+                while endIndexOfThisBracket < len(executionList) -1 and not finishedDecs:
+                    if executionList[endIndexOfThisBracket].find(']') > -1:
+                        finishedDecs = True
+                    else:
+                        endIndexOfThisBracket = endIndexOfThisBracket + 1
+                while i < endIndexOfThisBracket:
+                    if executionList[i].find('integer') > -1 or \
+                        executionList[i].find('float') > -1 or \
+                        executionList[i].find('string') > -1:
+                        executableSections.append((i,executionList[i],ResourceTypes.SectionType.declare_var))
+                    i = i+1
+        elif temp_str_val.find('begin') > -1:
+            settingBegin = True
+            print('found begin statement')
+        elif temp_str_val.find('while') > -1:
+            print('found while statement')
+        elif temp_str_val.find('if') > -1:
+            print('found if statement')
+        elif temp_str_val.find('else') > -1:
+            print('found else statement')
+        i = i + 1
+
+
+    numOpenBrackets = 0
+    d = _collections.deque()
+    listOfOpenBrackets = []
+    # for bracketedLine in executableLines:
+    #     if bracketedLine.find('(') > -1 or bracketedLine.find('[') > -1 or bracketedLine.find('{') > -1:
+    #         numOpenBrackets = numOpenBrackets + 1
+
+    if len(errorMessages) > 0:
+        # for l in executableElements:
+        #     print(l)
+        return ["Error Messages"] + errorMessages
+    else:
+        return executableSections
+
+
+    return
 
 #   Assumptions:
 #       There is one statement per line

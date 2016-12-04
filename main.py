@@ -1,9 +1,11 @@
 import parserRudi
 
+
 def main():
     rudiProgramLines = openFileForLines()
 
     executionList = parserRudi.parseToLineList(rudiProgramLines)
+    executionList = parserRudi.validateSyntax(executionList)
 
     print("Length of rudiProgramLines is " + str(len(rudiProgramLines)))
     print("Length of executionList is " + str(len(executionList)))
