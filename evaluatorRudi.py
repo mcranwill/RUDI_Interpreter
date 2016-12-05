@@ -3,15 +3,7 @@ import _collections
 import ResourceTypes
 from operationsRudi import *
 
-arithmetic_expressions = [
-    (r'[ \n\t]+', None),
-    (r'#[^\n]*', None),
-
-
-]
-
 def evaluatorRudi(executableSections):
-    executionStack = _collections.deque()
     variableList = {}
     errorMessages = []
 

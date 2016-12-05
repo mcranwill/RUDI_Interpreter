@@ -5,7 +5,7 @@ from ResourceTypes import *
 
 operatorPrecedence = {'*':1,'/':1,'+':2,'-':2}
 conditionalOperators = {':eq:':2,':ne:':2,':gt:':2,':lt:':2,':le:':2,':ge:':2,'^':1,'|':1,'~':1}
-booleanOperators = []
+
 
 class PrimitiveType():
     def evaluate(self):
@@ -40,7 +40,6 @@ class IOSection():
                 print(SyntaxRUDI.InvalidVariable(ioLine[0], temp_arr[1]))
             else:
                 localVars[temp_arr[1]] = (localVars.get(temp_arr[1])[0], getInput(localVars.get(temp_arr[1])[0]))
-
 
 class variableExpr(PrimitiveType):
     def __init__ (self, val, type):
@@ -262,8 +261,6 @@ def whatTypeAmI(seeker):
 
     if seeker in conditionalOperators:
         return (seeker,'operator')
-    if seeker in booleanOperators:
-        return (seeker,'operator')
 
     #   Maybe I am an operator
     m = re.match('[\+\-\*\/\=\(\)]+', seeker)
@@ -353,7 +350,6 @@ def postfixEvaluator(postfixOutput, localVars):
 
 def getInput(type):
     while True:
-
         if type == 'string':
             try:
                 userInput = input("Enter a " + type)
