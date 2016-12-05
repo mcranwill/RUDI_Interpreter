@@ -16,10 +16,7 @@ def main():
             for l in executableSections:
                 print(l)
             exit()
-    else:
-        for l in executableSections:
-            print(l)
-    print("Everything parsed correctly.")
+
 
 def openFileForLines():
     try:

@@ -22,11 +22,14 @@ def InvalidAssignmentEmptyOperand(lineNum):
     return "Line " + str(lineNum) + ": No symbols to the right of '=' symbol "
 def InvalidAssignmentEmptyOperand1(lineNum):
     return "Line " + str(lineNum) + ": '=' symbol must be separated with a space and be the second element"
-
 def InvalidArithmeticType(lineNum):
     return "Line " + str(lineNum) + ": Arithmetic requires storage in float or int"
+def IfConditionInvalid(lineNum):
+    return "Line " + str(lineNum) + ": If condition formated improperly. Please ensure condition is between ( and )"
+def WhileConditionInvalid(lineNum):
+    return "Line " + str(lineNum) + ": While condition formated improperly. Please ensure condition is between ( and )"
 
-        # def validatedecsOpenBracket(line):
+    # def validatedecsOpenBracket(line):
 #     if line.find('[') > -1:
 #         print("they are on the same line")
 #     elif str(executionList[i + 1]).find('[') > -1:

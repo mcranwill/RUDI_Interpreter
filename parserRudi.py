@@ -198,7 +198,7 @@ def createListForControl(listOfStrings, currentIndex):
     while i < len(listOfStrings):
         temp_line = str(listOfStrings[i])
         #   Is there a sub element (while, if, else)?
-        if temp_line.find('while') > -1:
+        if temp_line.find('while') > -1 and temp_line.find('(') > -1 and temp_line.find(')') > -1:
             endIndexOfThisBracket = findCorrespondingEndBracketIndex(listOfStrings[i:], i+currentIndex)
             associated = createListForControl(listOfStrings[i:endIndexOfThisBracket], i+currentIndex)
             subControlledTuple = ( i+currentIndex, temp_line, ResourceTypes.SectionType.while_control, associated)
