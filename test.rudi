@@ -28,6 +28,10 @@ x = x + 1
 fact = fact * x
 ]
 ]
+x = x + 2
+print x
+fact = x * x + 3 * 4
+print fact
 print n
 print "!="
 print fact

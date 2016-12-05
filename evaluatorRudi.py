@@ -1,6 +1,14 @@
 import SyntaxRUDI
 import _collections
 import ResourceTypes
+from operationsRudi import *
+
+arithmetic_expressions = [
+    (r'[ \n\t]+', None),
+    (r'#[^\n]*', None),
+
+
+]
 
 def evaluatorRudi(executableSections):
     print("Hello from evaluatorRudi")
@@ -14,8 +22,6 @@ def evaluatorRudi(executableSections):
         if executableSections[i][2] == ResourceTypes.SectionType.declare_var:
             temp_arr = executableSections[i][1].split(' ')
             if temp_arr[0] == 'integer':
-                # if variableList.has_key(temp_arr):
-                #
                 variableList[temp_arr[1]] = ('integer',0)
             elif temp_arr[0] == 'string':
                 variableList[temp_arr[1]] = ('string', '')
@@ -41,30 +47,18 @@ def evaluatorRudi(executableSections):
                 else:
                     variableList[temp_arr[1]] = (variableList.get(temp_arr[1])[0], getInput(variableList.get(temp_arr[1])[0]))
         elif executableSections[i][2] == ResourceTypes.SectionType.arithmetic_operation:
-            temp_before, part, temp_after = str(executableSections[i][1]).partition('=')
-            temp_before = temp_before.strip()
-            temp_after = temp_after.strip()
-            part = part.strip()
-            if not temp_before in variableList:
-                errorMessages.append(SyntaxRUDI.InvalidVariable(executableSections[i][0], temp_before))
-            else:
-                if temp_after.strip() in variableList:
-                    newZerothTerm = variableList.get(temp_before.strip())[0]
-                    newFirstTerm = variableList.get(temp_after.strip())[1]
-                    variableList[temp_before] = (newZerothTerm,newFirstTerm)
-                else:
-                    #TODO: Make this actually work
-                    print("Not Yet Implemented")
-                    # temp_arr = temp_after.split(' ')
-                    # if len(temp_arr) > 0:
-                    #     #Non-basic assignment
-                    #     variableList[temp_before] = evaluateExpression(temp_arr)
-                    # elif not temp_after in variableList:
-                    #     errorMessages.append(SyntaxRUDI.InvalidVariable(executableSections[i][0], temp_after))
-                    # else:
-                    #     variableList[temp_before] = variableList.get(temp_after)
+            temp_arr = str(executableSections[i][1]).split(' ')
+            al = assignLine(temp_arr[0].strip(), temp_arr[1].strip(), temp_arr[2:], executableSections[i][0])
+            al.evaluate(variableList)
         elif executableSections[i][2] == ResourceTypes.SectionType.if_control:
-            print("")
+            condition = executableSections[i][1]
+            trueSection = executableSections[i][3]
+            if len(executableSections[i]) == 5:
+                falseSection = executableSections[i][4]
+            else:
+                falseSection = None
+            ifElem = ifSection(condition,trueSection,falseSection)
+            ifElem.evaluate(variableList)
         elif executableSections[i][2] == ResourceTypes.SectionType.else_control:
             print("")
         elif executableSections[i][2] == ResourceTypes.SectionType.while_control:

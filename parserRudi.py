@@ -5,6 +5,9 @@ def parserRudi():
     # Start Parsing
     print("Hello from parser!")
 
+def lexerCreateTokens(rudiLines):
+    return ""
+
 def validateSyntax(executionList):
     errorMessages = []
     executableSections = []
@@ -60,9 +63,19 @@ def validateSyntax(executionList):
                 endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
                 associatedElems = createListForControl(executionList[i:endIndexOfThisBracket], i)
                 tupleOfIf = (i, temp_str_val, ResourceTypes.SectionType.if_control, associatedElems)
-                executableSections.append(tupleOfIf)
+                #executableSections.append(tupleOfIf)
 
                 i = endIndexOfThisBracket -1
+                #   Now check if the next line is an else, since that will be dependent on this if
+                if str(executionList[i+1]).find('else') > -1:
+                    endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i+1:], i+1)
+                    associatedElseElems = createListForControl(executionList[i+1:endIndexOfThisBracket], i+1)
+                    #tupleOfElse = (i+1, temp_str_val, ResourceTypes.SectionType.else_control, associatedElseElems)
+                    tupleOfIf = (i, temp_str_val, ResourceTypes.SectionType.if_control, associatedElems, associatedElseElems)
+                    executableSections.append(tupleOfIf)
+                    i = endIndexOfThisBracket - 1
+                else:
+                    executableSections.append(tupleOfIf)
         elif temp_str_val.find('else') > -1:
             if settingBegin == False:
                 errorMessages.append(SyntaxRUDI.ERRORBeginStatementMissing(i))
@@ -142,19 +155,6 @@ def parseToLineList(listOfProgramLines):
                 #   Remember to set the flag to false
                 flag_MultiLineComment = False
         i = i + 1
-
-    # #   Next we validate specific elements to ensure consistency with syntax
-    # if str(executableLines[0]).lower().find('program') == -1:
-    #     errorMessages.append(SyntaxRUDI.ERRORProgramMissing)
-    # if str(executableLines[-1]).lower().find('end') == -1:
-    #     errorMessages.append(SyntaxRUDI.ERROREndStatementMissing(len(executableLines)))
-    #
-    # numOpenBrackets = 0
-    # d = _collections.deque()
-    # listOfOpenBrackets = []
-    # # for bracketedLine in executableLines:
-    # #     if bracketedLine.find('(') > -1 or bracketedLine.find('[') > -1 or bracketedLine.find('{') > -1:
-    # #         numOpenBrackets = numOpenBrackets + 1
 
     if len(errorMessages) > 0:
         for l in executableLines:

@@ -16,7 +16,17 @@ def InvalidType(lineNum, failedType):
     return "Line " + str(lineNum) + ": Type presented " + failedType + " is not valid"
 def InvalidVariable(lineNum, failedVar):
     return "Line " + str(lineNum) + ": Variable " + failedVar + " does not exist"
-# def validatedecsOpenBracket(line):
+def InvalidAssignmentNoOperator(lineNum):
+    return "Line " + str(lineNum) + ": '=' symbol must be separated with a space and be the second element"
+def InvalidAssignmentEmptyOperand(lineNum):
+    return "Line " + str(lineNum) + ": No symbols to the right of '=' symbol "
+def InvalidAssignmentEmptyOperand1(lineNum):
+    return "Line " + str(lineNum) + ": '=' symbol must be separated with a space and be the second element"
+
+def InvalidArithmeticType(lineNum):
+    return "Line " + str(lineNum) + ": Arithmetic requires storage in float or int"
+
+        # def validatedecsOpenBracket(line):
 #     if line.find('[') > -1:
 #         print("they are on the same line")
 #     elif str(executionList[i + 1]).find('[') > -1:
