@@ -296,8 +296,12 @@ def postfixEvaluator(postfixOutput, localVars):
     operandStack = []
     for val in postfixOutput:
         if val[0] in operatorPrecedence or val[0] in conditionalOperators:
-            operandTwo = operandStack.pop()
-            operandOne = operandStack.pop()
+            if val[0] == '~':
+                operandTwo = operandStack.pop()
+                tempResult = not operandTwo
+            else:
+                operandTwo = operandStack.pop()
+                operandOne = operandStack.pop()
             if val[0] == '*':
                 tempResult = operandOne * operandTwo
             elif val[0] == '/':
@@ -322,8 +326,8 @@ def postfixEvaluator(postfixOutput, localVars):
                 tempResult = operandOne < operandTwo
             elif val[0] == '|':
                 tempResult = operandOne >= operandTwo
-            elif val[0] == '~':
-                tempResult = operandOne <= operandTwo
+            # elif val[0] == '~':
+            #     tempResult = operandOne <= operandTwo
             operandStack.append(tempResult)
         else:
             if val[1] == 'variable':
