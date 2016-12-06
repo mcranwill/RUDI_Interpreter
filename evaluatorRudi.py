@@ -24,12 +24,6 @@ def evaluatorRudi(executableSections):
             ExprToEvaluate(executableSections[i], executableSections[i][0], variableList)
         i+=1
 
-    # for section in executableSections:
-    #     if len(section) == 4:
-    #         printSubSections(section)
-    #     else:
-    #         print("line number is " + str(section[0]) + " statement: " + section[1] \
-    #               + " and type is " + str(section[2]))
 
 def printSubSections(t):
     print("line number is " + str(t[0]) + " statement: " + t[1] \
@@ -40,38 +34,6 @@ def printSubSections(t):
         else:
             print("line number is " + str(section[0]) + " statement: " + section[1] \
                   + " and type is " + str(section[2]))
-
-def getInput(type):
-    while True:
-
-        if type == 'string':
-            try:
-                userInput = input("Enter a " + type)
-            except ValueError:
-                print("That's not a string")
-                continue
-            else:
-                print("You entered " + userInput)
-                break
-        elif type == 'float':
-            try:
-                userInput = float(input("Enter a " + type))
-            except ValueError:
-                print("That's not an integer")
-                continue
-            else:
-                print("You entered " + str(userInput))
-                break
-        elif type == 'integer':
-            try:
-                userInput = int(input("Enter a " + type))
-            except ValueError:
-                print("That's not an integer")
-                continue
-            else:
-                print("You entered " + str(userInput))
-                break
-    return userInput
 
 def evaluateExpression(temp_arr):
     i = 0

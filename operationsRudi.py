@@ -7,12 +7,6 @@ operatorPrecedence = {'*':1,'/':1,'+':2,'-':2}
 conditionalOperators = {':eq:':2,':ne:':2,':gt:':2,':lt:':2,':le:':2,':ge:':2,'^':1,'|':1,'~':1}
 
 
-class PrimitiveType():
-    def evaluate(self):
-        return self.val
-
-    def getType(self):
-        return self.type
 
 class ControlSection():
     pass
@@ -40,26 +34,6 @@ class IOSection():
                 print(SyntaxRUDI.InvalidVariable(ioLine[0], temp_arr[1]))
             else:
                 localVars[temp_arr[1]] = (localVars.get(temp_arr[1])[0], getInput(localVars.get(temp_arr[1])[0]))
-
-class variableExpr(PrimitiveType):
-    def __init__ (self, val, type):
-        self.val = val
-        self.type = type
-
-class integerExpr(PrimitiveType):
-    def __init__ (self, val, type):
-        self.val = val
-        self.type = type
-
-class floatExpr(PrimitiveType):
-    def __init__ (self, val, type):
-        self.val = val
-        self.type = type
-
-class stringExpr(PrimitiveType):
-    def __init__ (self, val, type):
-        self.val = val
-        self.type = type
 
 class printRudi(IOSection):
     pass
@@ -349,10 +323,15 @@ def postfixEvaluator(postfixOutput, localVars):
     return operandStack.pop()
 
 def getInput(type):
+    first = True
     while True:
         if type == 'string':
             try:
-                userInput = input("Enter a " + type)
+                if first:
+                    userInput = input()
+                    first = False
+                else:
+                    userInput = input("Enter a " + type)
             except ValueError:
                 print("That's not a string")
                 continue
@@ -361,7 +340,11 @@ def getInput(type):
                 break
         elif type == 'float':
             try:
-                userInput = float(input("Enter a " + type))
+                if first:
+                    userInput = float(input())
+                    first = False
+                else:
+                    userInput = float(input("Enter a " + type))
             except ValueError:
                 print("That's not an integer")
                 continue
@@ -370,7 +353,11 @@ def getInput(type):
                 break
         elif type == 'integer':
             try:
-                userInput = int(input("Enter a " + type))
+                if first:
+                    userInput = int(input())
+                    first = False
+                else:
+                    userInput = int(input("Enter a " + type))
             except ValueError:
                 print("That's not an integer")
                 continue

@@ -1,12 +1,6 @@
 import SyntaxRUDI
 import ResourceTypes
 
-def parserRudi():
-    # Start Parsing
-    print("Hello from parser!")
-
-def lexerCreateTokens(rudiLines):
-    return ""
 
 def validateSyntax(executionList):
     errorMessages = []
@@ -33,9 +27,11 @@ def validateSyntax(executionList):
             else:
                 endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
                 if temp_str_val.find('[') > -1:
-                    print("they are on the same line")
+                    #print("they are on the same line")
+                    a = 1
                 elif str(executionList[i+1]).find('[') > -1:
-                    print("it is one the next line")
+                    a = 1
+                    #print("it is one the next line")
                 else:
                     errorMessages.append(SyntaxRUDI.ERRORdecsOpenBracketMissing(i))
                 while i < endIndexOfThisBracket:
@@ -47,7 +43,7 @@ def validateSyntax(executionList):
                 i = i-1
         elif temp_str_val.find('begin') > -1:
             settingBegin = True
-        elif temp_str_val.find('while') > -1:
+        elif temp_str_val.find('while') > -1 and temp_str_val.find('(') > -1 and temp_str_val.find(')') > -1:
             if settingBegin == False:
                 errorMessages.append(SyntaxRUDI.ERRORBeginStatementMissing(i))
             else:
@@ -56,7 +52,7 @@ def validateSyntax(executionList):
                 tupleOfWhile = (i,temp_str_val,ResourceTypes.SectionType.while_control, associatedElems)
                 executableSections.append(tupleOfWhile )
                 i = endIndexOfThisBracket -1
-        elif temp_str_val.find('if') > -1:
+        elif temp_str_val.find('if') > -1 and temp_str_val.find('(') > -1 and temp_str_val.find(')') > -1:
             if settingBegin == False:
                 errorMessages.append(SyntaxRUDI.ERRORBeginStatementMissing(i))
             else:
@@ -173,9 +169,6 @@ def makeLowerStrip(line):
     return line
 
 
-def stripComment(lineWithComment):
-    return lineWithComment.partition('/*')[0].strip()
-
 def lowerExceptString(line):
     newLine = ""
     if str(line).count('"') == 2:
@@ -204,7 +197,7 @@ def createListForControl(listOfStrings, currentIndex):
             subControlledTuple = ( i+currentIndex, temp_line, ResourceTypes.SectionType.while_control, associated)
             subExecutables.append(subControlledTuple)
             i = endIndexOfThisBracket - 1
-        elif temp_line.find('if') > -1:
+        elif temp_line.find('if') > -1 and temp_line.find('(') > -1 and temp_line.find(')') > -1:
             endIndexOfThisBracket = findCorrespondingEndBracketIndex(listOfStrings[i:], i+currentIndex)
             associated = createListForControl(listOfStrings[i:endIndexOfThisBracket], i + currentIndex)
             subControlledTuple = ( i+currentIndex, temp_line, ResourceTypes.SectionType.if_control, associated)
@@ -234,6 +227,10 @@ def createListForControl(listOfStrings, currentIndex):
             subControlledTuple = (
                 i + currentIndex, temp_line, ResourceTypes.SectionType.arithmetic_operation)
             subExecutables.append(subControlledTuple)
+        elif temp_line.find('input') > -1:
+            subControlledTuple = (
+                i + currentIndex, temp_line, ResourceTypes.SectionType.io_operation)
+            subExecutables.append(subControlledTuple)
         i = i + 1
     return subExecutables
 
@@ -262,5 +259,3 @@ def findCorrespondingEndBracketIndex(listOfStrings, currentIndex):
             endIndexOfThisBracket = endIndexOfThisBracket + 1
     return endIndexOfThisBracket + currentIndex + 1
 
-if __name__ == '__main__':
-    parserRudi()
