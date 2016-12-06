@@ -1,4 +1,4 @@
-
+#   Define all error strings that the application will need in one place.
 
 ERRORProgramMissing = "Line 1: Keyword 'program' should appear in this line"
 ERRORdecsMissing = "Line 2: Keyword 'decs' should appear in this line"
