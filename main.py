@@ -1,3 +1,13 @@
+#   Driver program for RUDI Interpreter that reads in a file and
+#   execute it per the RUDI grammar.  Program is written against
+#   the Python3.5 language standard and is run like
+#   python main.py <input_file> where input_file is like test.rudi
+#
+#   RUDI Interpreter Final Project- Fall 2016
+#   Data Structures & Algorithms for Practicing Engineers
+#   Prof. Manuel Rosso-Llopart, Carnegie-Mellon University
+#   Authors: Michael Cranwill & Erik Sjoberg
+
 import parserRudi
 import evaluatorRudi
 import sys
