@@ -1,104 +1,16 @@
+#   Parser object that handles removing comments and appending lines,
+#   this object also creates the tuples that are used elsewhere
+#
+#   RUDI Interpreter Final Project- Fall 2016
+#   Data Structures & Algorithms for Practicing Engineers
+#   Prof. Manuel Rosso-Llopart, Carnegie-Mellon University
+#   Authors: Michael Cranwill & Erik Sjoberg
+
 import SyntaxRUDI
 import ResourceTypes
 
-
-def validateSyntax(executionList):
-    errorMessages = []
-    executableSections = []
-
-    #   Validate specific elements to ensure consistency with syntax
-    if str(executionList[0]).lower().find('program') == -1:
-        errorMessages.append(SyntaxRUDI.ERRORProgramMissing)
-
-    if str(executionList[-1]).lower().find('end') == -1:
-        errorMessages.append(SyntaxRUDI.ERROREndStatementMissing(len(executionList)))
-
-    finishedDecs = False
-    settingBegin = False
-    i = 0
-
-    while (i < len(executionList)-1):
-        temp_str_val = str(executionList[i])
-        if temp_str_val.find('decs') > -1:
-            #   Now we need to find where decs ends and process until we get there
-            #   First option is they are on the same line
-            if finishedDecs == True:
-                errorMessages.append(SyntaxRUDI.ERRORdecsDeclaredAlready(i))
-            else:
-                endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
-                if temp_str_val.find('[') > -1:
-                    #print("they are on the same line")
-                    a = 1
-                elif str(executionList[i+1]).find('[') > -1:
-                    a = 1
-                    #print("it is one the next line")
-                else:
-                    errorMessages.append(SyntaxRUDI.ERRORdecsOpenBracketMissing(i))
-                while i < endIndexOfThisBracket:
-                    if executionList[i].find('integer') > -1 or \
-                        executionList[i].find('float') > -1 or \
-                        executionList[i].find('string') > -1:
-                        executableSections.append((i,executionList[i],ResourceTypes.SectionType.declare_var))
-                    i = i+1
-                i = i-1
-        elif temp_str_val.find('begin') > -1:
-            settingBegin = True
-        elif temp_str_val.find('while') > -1 and temp_str_val.find('(') > -1 and temp_str_val.find(')') > -1:
-            if settingBegin == False:
-                errorMessages.append(SyntaxRUDI.ERRORBeginStatementMissing(i))
-            else:
-                endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
-                associatedElems = createListForControl(executionList[i:endIndexOfThisBracket], i)
-                tupleOfWhile = (i,temp_str_val,ResourceTypes.SectionType.while_control, associatedElems)
-                executableSections.append(tupleOfWhile )
-                i = endIndexOfThisBracket -1
-        elif temp_str_val.find('if') > -1 and temp_str_val.find('(') > -1 and temp_str_val.find(')') > -1:
-            if settingBegin == False:
-                errorMessages.append(SyntaxRUDI.ERRORBeginStatementMissing(i))
-            else:
-                endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
-                associatedElems = createListForControl(executionList[i:endIndexOfThisBracket], i)
-                tupleOfIf = (i, temp_str_val, ResourceTypes.SectionType.if_control, associatedElems)
-                #executableSections.append(tupleOfIf)
-
-                i = endIndexOfThisBracket -1
-                #   Now check if the next line is an else, since that will be dependent on this if
-                if str(executionList[i+1]).find('else') > -1:
-                    endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i+1:], i+1)
-                    associatedElseElems = createListForControl(executionList[i+1:endIndexOfThisBracket], i+1)
-                    #tupleOfElse = (i+1, temp_str_val, ResourceTypes.SectionType.else_control, associatedElseElems)
-                    tupleOfIf = (i, temp_str_val, ResourceTypes.SectionType.if_control, associatedElems, associatedElseElems)
-                    executableSections.append(tupleOfIf)
-                    i = endIndexOfThisBracket - 1
-                else:
-                    executableSections.append(tupleOfIf)
-        elif temp_str_val.find('else') > -1:
-            if settingBegin == False:
-                errorMessages.append(SyntaxRUDI.ERRORBeginStatementMissing(i))
-            else:
-                endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
-                associatedElems = createListForControl(executionList[i:endIndexOfThisBracket], i)
-                tupleOfIf = (i, temp_str_val, ResourceTypes.SectionType.else_control, associatedElems)
-                executableSections.append(tupleOfIf)
-                i = endIndexOfThisBracket -1
-        elif temp_str_val.find('print') > -1:
-            subControlledTuple = (i , temp_str_val, ResourceTypes.SectionType.io_operation)
-            executableSections.append(subControlledTuple)
-        elif temp_str_val.find('input') > -1:
-            subControlledTuple = (i , temp_str_val, ResourceTypes.SectionType.io_operation)
-            executableSections.append(subControlledTuple)
-        elif '+' in temp_str_val or '-' in temp_str_val or '*' in temp_str_val or \
-                '/' in temp_str_val or '=' in temp_str_val:
-            subControlledTuple = (i , temp_str_val, ResourceTypes.SectionType.arithmetic_operation)
-            executableSections.append(subControlledTuple)
-        i = i + 1
-
-    if len(errorMessages) > 0:
-        return ["Error Messages"] + errorMessages
-    else:
-        return executableSections
-
-
+#   Validate basic syntax and ensure that there is one statement per line
+#   Strips out all comment text
 #   Assumptions:
 #       There is one statement per line
 def parseToLineList(listOfProgramLines):
@@ -106,7 +18,7 @@ def parseToLineList(listOfProgramLines):
     errorMessages = []
     flag_MultiLineComment = False
 
-    #   First we remove all comment text from each line
+    #   First we remove all comment text from each line and identify if it needs appended
     i = 0
     while i < len(listOfProgramLines):
         #   Handle making everything lowercase and perform strip
@@ -159,6 +71,108 @@ def parseToLineList(listOfProgramLines):
     else:
         return executableLines
 
+#   Create the tuples that tag different controls and sections
+def validateSyntax(executionList):
+    errorMessages = []
+    executableSections = []
+
+    #   Validate specific elements to ensure consistency with syntax
+    if str(executionList[0]).lower().find('program') == -1:
+        errorMessages.append(SyntaxRUDI.ERRORProgramMissing)
+
+    if str(executionList[-1]).lower().find('end') == -1:
+        errorMessages.append(SyntaxRUDI.ERROREndStatementMissing(len(executionList)))
+
+    finishedDecs = False
+    settingBegin = False
+    i = 0
+
+    while (i < len(executionList)-1):
+        temp_str_val = str(executionList[i])
+        if temp_str_val.find('decs') > -1:
+            #   Now we need to find where decs ends and process until we get there
+            #   First option is they are on the same line
+            if finishedDecs == True:
+                errorMessages.append(SyntaxRUDI.ERRORdecsDeclaredAlready(i))
+            else:
+                endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
+                if temp_str_val.find('[') > -1:
+                    #print("they are on the same line")
+                    a = 1
+                elif str(executionList[i+1]).find('[') > -1:
+                    a = 1
+                else:
+                    errorMessages.append(SyntaxRUDI.ERRORdecsOpenBracketMissing(i))
+                while i < endIndexOfThisBracket:
+                    if executionList[i].find('integer') > -1 or \
+                        executionList[i].find('float') > -1 or \
+                        executionList[i].find('string') > -1:
+                        executableSections.append((i,executionList[i],ResourceTypes.SectionType.declare_var))
+                    i = i+1
+                i = i-1
+        elif temp_str_val.find('begin') > -1:
+            settingBegin = True
+        #   Found a while control to process at the top level
+        elif temp_str_val.find('while') > -1 and temp_str_val.find('(') > -1 and temp_str_val.find(')') > -1:
+            #   Determine if 'begin' has been seen so far
+            if settingBegin == False:
+                errorMessages.append(SyntaxRUDI.ERRORBeginStatementMissing(i))
+            else:
+                endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
+                associatedElems = createListForControl(executionList[i:endIndexOfThisBracket], i)
+                tupleOfWhile = (i,temp_str_val,ResourceTypes.SectionType.while_control, associatedElems)
+                executableSections.append(tupleOfWhile )
+                i = endIndexOfThisBracket -1
+        #   Found an if control to process at the top level
+        elif temp_str_val.find('if') > -1 and temp_str_val.find('(') > -1 and temp_str_val.find(')') > -1:
+            #   Determine if 'begin' has been seen so far
+            if settingBegin == False:
+                errorMessages.append(SyntaxRUDI.ERRORBeginStatementMissing(i))
+            else:
+                endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
+                associatedElems = createListForControl(executionList[i:endIndexOfThisBracket], i)
+                tupleOfIf = (i, temp_str_val, ResourceTypes.SectionType.if_control, associatedElems)
+                i = endIndexOfThisBracket -1
+                #   Now check if the next line is an else, since that will be dependent on this if
+                if str(executionList[i+1]).find('else') > -1:
+                    endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i+1:], i+1)
+                    associatedElseElems = createListForControl(executionList[i+1:endIndexOfThisBracket], i+1)
+                    tupleOfIf = (i, temp_str_val, ResourceTypes.SectionType.if_control, associatedElems, associatedElseElems)
+                    executableSections.append(tupleOfIf)
+                    i = endIndexOfThisBracket - 1
+                else:
+                    executableSections.append(tupleOfIf)
+        #   Found an else control
+        elif temp_str_val.find('else') > -1:
+            #   Determine if 'begin' has been seen so far
+            if settingBegin == False:
+                errorMessages.append(SyntaxRUDI.ERRORBeginStatementMissing(i))
+            else:
+                endIndexOfThisBracket = findCorrespondingEndBracketIndex(executionList[i:], i)
+                associatedElems = createListForControl(executionList[i:endIndexOfThisBracket], i)
+                tupleOfIf = (i, temp_str_val, ResourceTypes.SectionType.else_control, associatedElems)
+                executableSections.append(tupleOfIf)
+                i = endIndexOfThisBracket -1
+        #   Found an io_control that needs to be processed
+        elif temp_str_val.find('print') > -1:
+            subControlledTuple = (i , temp_str_val, ResourceTypes.SectionType.io_operation)
+            executableSections.append(subControlledTuple)
+        #   Found an io_control that needs to be processed
+        elif temp_str_val.find('input') > -1:
+            subControlledTuple = (i , temp_str_val, ResourceTypes.SectionType.io_operation)
+            executableSections.append(subControlledTuple)
+        # Found an arithmetic section that needs to be processed
+        elif '+' in temp_str_val or '-' in temp_str_val or '*' in temp_str_val or \
+                '/' in temp_str_val or '=' in temp_str_val:
+            subControlledTuple = (i , temp_str_val, ResourceTypes.SectionType.arithmetic_operation)
+            executableSections.append(subControlledTuple)
+        i = i + 1
+
+    if len(errorMessages) > 0:
+        return ["Error Messages"] + errorMessages
+    else:
+        return executableSections
+
 
 def makeLowerStrip(line):
     if line.find('"') > -1:
@@ -168,23 +182,23 @@ def makeLowerStrip(line):
 
     return line
 
-
+#   convert line to lower
 def lowerExceptString(line):
     newLine = ""
     if str(line).count('"') == 2:
         beforePart, part, afterPart = line.partition('"')
     else:
-        print("Something very strange is happening")
+        print("Line with string should have exactly two \"'s, this line had " + str(str(line).count('"')))
         return newLine
 
     #   Ensure the last character of the line is "
     if afterPart[-1] == '"':
         newLine = beforePart.lower() + '"' + afterPart
     else:
-        print("Something very strange is happening")
+        print("Last character of string should be \"")
     return newLine
 
-
+#   Process control and look for sub control elements
 def createListForControl(listOfStrings, currentIndex):
     subExecutables = []
     i = 1
