@@ -12,8 +12,8 @@ import SyntaxRUDI
 import re
 from ResourceTypes import *
 
-operatorPrecedence = {'*':1,'/':1,'+':2,'-':2}
-conditionalOperators = {':eq:':2,':ne:':2,':gt:':2,':lt:':2,':le:':2,':ge:':2,'^':1,'|':1,'~':1}
+operatorPrecedence = {'*':1,'/':1,'+':2,'-':2,':eq:':2,':ne:':2,':gt:':2,':lt:':2,':le:':2,':ge:':2,'^':4,'|':4,'~':4}
+conditionalOperators = {':eq:':2,':ne:':2,':gt:':2,':lt:':2,':le:':2,':ge:':2,'^':4,'|':4,'~':4}
 
 ##  Classes that handle processing of each type of statement
 
@@ -78,7 +78,7 @@ class arithmeticSection():
 
 class ifSection(ControlSection):
     def __init__ (self, condition, trueSection, falseSection, lineNum):
-        temp_condition = re.match('if \([<A-Z><a-z><0-9>.\: ]+\)', condition)
+        temp_condition = re.match('if \([<A-Z><a-z><0-9>.\(\)\:\^\|\~ ]+\)', condition)
         condition = temp_condition.group(0).replace('if', '').replace('(', '').replace(')', '').strip()
         if len(condition) > 0:
             temp_arr = condition.split()
@@ -126,7 +126,7 @@ class ifSection(ControlSection):
 
 class whileSection(ControlSection):
     def __init__ (self, condition, trueSection, lineNum):
-        temp_condition = re.match('while \([<A-Z><a-z><0-9>.\: ]+\)', condition)
+        temp_condition = re.match('while \([<A-Z><a-z><0-9>.\(\)\:\^\|\~ ]+\)', condition)
         condition = temp_condition.group(0).replace('while', '').replace('(', '').replace(')', '').strip()
         if len(condition) > 0:
             temp_arr = condition.split()
@@ -323,9 +323,9 @@ def postfixEvaluator(postfixOutput, localVars):
             elif val[0] == ':le:':
                 tempResult = operandOne <= operandTwo
             elif val[0] == '^':
-                tempResult = operandOne < operandTwo
+                tempResult = operandOne and operandTwo
             elif val[0] == '|':
-                tempResult = operandOne >= operandTwo
+                tempResult = operandOne or operandTwo
             # elif val[0] == '~':
             #     tempResult = operandOne <= operandTwo
             operandStack.append(tempResult)

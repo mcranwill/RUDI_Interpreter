@@ -22,7 +22,7 @@ fact = 1
 else
 [ x = 1
 fact = 1
-while (n :ge: x)
+while (n :ge: x ^ x :ne: 0 ^ ~ (7 :ne: 7) )
 [
 x = x + 1
 fact = fact * x
