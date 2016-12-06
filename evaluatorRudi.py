@@ -1,5 +1,13 @@
+#   Evaluator processes each tuple and is a pass through to the
+#   operations object that evaluates expressions and controls
+#   defined within the operations object.
+#
+#   RUDI Interpreter Final Project- Fall 2016
+#   Data Structures & Algorithms for Practicing Engineers
+#   Prof. Manuel Rosso-Llopart, Carnegie-Mellon University
+#   Authors: Michael Cranwill & Erik Sjoberg
+
 import SyntaxRUDI
-import _collections
 import ResourceTypes
 from operationsRudi import *
 
@@ -24,7 +32,6 @@ def evaluatorRudi(executableSections):
             ExprToEvaluate(executableSections[i], executableSections[i][0], variableList)
         i+=1
 
-
 def printSubSections(t):
     print("line number is " + str(t[0]) + " statement: " + t[1] \
           + " and type is " + str(t[2]))
@@ -35,11 +42,6 @@ def printSubSections(t):
             print("line number is " + str(section[0]) + " statement: " + section[1] \
                   + " and type is " + str(section[2]))
 
-def evaluateExpression(temp_arr):
-    i = 0
-    while i < len(temp_arr):
-        print(temp_arr[i])
-        i+=1
 
 if __name__ == '__main__':
     evaluatorRudi()
