@@ -1,3 +1,12 @@
+#   Collection of operations that implement functionality of controls
+#   and expressions.  Implements the conversion from infix to postfix
+#   notation using the Shunting-Yard Algorithm that is applied to both
+#   arithmetic and boolean expressions.
+#
+#   RUDI Interpreter Final Project- Fall 2016
+#   Data Structures & Algorithms for Practicing Engineers
+#   Prof. Manuel Rosso-Llopart, Carnegie-Mellon University
+#   Authors: Michael Cranwill & Erik Sjoberg
 
 import SyntaxRUDI
 import re
@@ -6,7 +15,7 @@ from ResourceTypes import *
 operatorPrecedence = {'*':1,'/':1,'+':2,'-':2}
 conditionalOperators = {':eq:':2,':ne:':2,':gt:':2,':lt:':2,':le:':2,':ge:':2,'^':1,'|':1,'~':1}
 
-
+##  Classes that handle processing of each type of statement
 
 class ControlSection():
     pass
@@ -201,6 +210,8 @@ class assignLine():
         else:
             return SyntaxRUDI.InvalidVariable(self.lineNum, self.left)
 
+
+##  Helper Functions
 def tokenEvaluation(lineNum, t, localVariables):
     if t[1] == 'variable':
         if t[0] in localVariables:
